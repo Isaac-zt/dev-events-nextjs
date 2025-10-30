@@ -47,6 +47,8 @@ async function connectToDatabase(): Promise<mongoose.Connection> {
   if (!cached.promise) {
     const opts: mongoose.ConnectOptions = {
       bufferCommands: false, // Disable mongoose buffering to fail fast in serverless environments
+      serverSelectionTimeoutMS: 10000, // 10 seconds timeout for server selection
+      socketTimeoutMS: 45000, // 45 seconds timeout for socket operations
     };
 
     // Create a new connection promise and cache it
