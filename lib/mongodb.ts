@@ -2,7 +2,6 @@ import mongoose from 'mongoose';
 
 // Extend the global namespace to include mongoose connection cache
 declare global {
-  // eslint-disable-next-line no-var
   var mongoose: {
     conn: mongoose.Connection | null;
     promise: Promise<mongoose.Connection> | null;
