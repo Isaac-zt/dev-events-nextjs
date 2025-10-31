@@ -1,7 +1,10 @@
 import { notFound } from "next/navigation";
 import connectToDatabase from "@/lib/mongodb";
-import Event from "@/database/event.model";
+import Event, { IEvent } from "@/database/event.model";
 import Image from "next/image";
+import BookEvent from "@/components/BookEvent";
+import EventCard from "@/components/EventCard";
+import { getSimilarEventsBySlug } from "@/lib/actions/event.actions";
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -49,7 +52,12 @@ const EventDetails = async ({ params }: { params: Promise<{ slug: string }>}) =>
 
   if(!event) return notFound();
 
+  const bookings = 10;
+
   const { description, image, overview, date, time, location, mode, agenda, audience, tags, organizer } = event;
+
+  const similarEventsData = await getSimilarEventsBySlug(slug);
+  const similarEvents: IEvent[] = JSON.parse(JSON.stringify(similarEventsData));
 
   return (
     <section id="event">
@@ -90,8 +98,41 @@ const EventDetails = async ({ params }: { params: Promise<{ slug: string }>}) =>
         </div>
        {/* booking form- right side */}
        <aside className="booking">
-        <p className="text-lg font-semibold">Book Event</p>
+        <div className="signup-card">
+          <h2>Book Your Spot</h2>
+          {bookings > 0 ? (
+            <p className="text-sm">
+              Join {bookings} people who have already booked their spot
+            </p>
+          ): (
+            <p className="text-sm">Be the first to book your spot!</p>
+          )}
+
+          <BookEvent />
+        </div>
        </aside>
+     </div>
+
+     <div className="flex w-full flex-col gap-4 pt-20">
+       <h2>Similar Events</h2>
+       {similarEvents.length > 0 ? (
+         <ul className="events">
+           {similarEvents.map((similarEvent: IEvent) => (
+             <li key={similarEvent._id?.toString() || similarEvent.slug}>
+               <EventCard 
+                 title={similarEvent.title}
+                 image={similarEvent.image}
+                 slug={similarEvent.slug}
+                 location={similarEvent.location}
+                 date={similarEvent.date}
+                 time={similarEvent.time}
+               />
+             </li>
+           ))}
+         </ul>
+       ) : (
+         <p className="text-center text-gray-500">No similar events found.</p>
+       )}
      </div>
     </section>
   )

@@ -34,8 +34,8 @@ const page = async () => {
 
        <ul className="events">
         {events && events.length > 0 ? (
-          events.map((event: any) => (
-            <li key={event._id?.toString() || event.slug}>
+          events.map((event: IEvent) => (
+            <li key={event._id?.toString() || event.slug} className="list-none">
               <EventCard 
                 title={event.title}
                 image={event.image}
