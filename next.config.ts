@@ -25,10 +25,8 @@ const nextConfig = {
   },
   // This is required to support PostHog trailing slash API requests
   skipTrailingSlashRedirect: true,
-  experimental: {
-    // Enable component-level caching directives like 'use cache' and cacheLife()
-    cacheComponents: true,
-  },
+  // Enable component-level caching directives like 'use cache' and cacheLife()
+  cacheComponents: true,
 } satisfies NextConfig;
 
 export default nextConfig;

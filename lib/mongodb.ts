@@ -1,11 +1,15 @@
 import mongoose from 'mongoose';
 
-// Extend the global namespace to include mongoose connection cache
+// Types for mongoose cache stored on the Node global object
+type MongooseCache = {
+  conn: mongoose.Connection | null;
+  promise: Promise<mongoose.Connection> | null;
+};
+
+// Augment the global namespace
 declare global {
-  var mongoose: {
-    conn: mongoose.Connection | null;
-    promise: Promise<mongoose.Connection> | null;
-  } | undefined;
+  // eslint-disable-next-line no-var
+  var mongoose: MongooseCache | undefined;
 }
 
 // MongoDB connection URI from environment variable
@@ -23,11 +27,9 @@ if (!MONGODB_URI) {
  * in development. This prevents connections from growing exponentially
  * during API Route usage.
  */
-let cached = global.mongoose;
-
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
-}
+const globalWithMongoose = global as typeof global & { mongoose?: MongooseCache };
+const cached: MongooseCache =
+  globalWithMongoose.mongoose ?? (globalWithMongoose.mongoose = { conn: null, promise: null });
 
 /**
  * Establishes a connection to MongoDB using Mongoose.
