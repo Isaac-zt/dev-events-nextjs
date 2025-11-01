@@ -5,9 +5,7 @@ import Image from "next/image";
 import BookEvent from "@/components/BookEvent";
 import EventCard from "@/components/EventCard";
 import { getSimilarEventsBySlug } from "@/lib/actions/event.actions";
-
-// Force dynamic rendering
-export const dynamic = 'force-dynamic';
+import { cacheLife } from "next/cache";
 
 const EventDetailItem = ({ icon, alt, label} : { icon: string; alt: string; label: string; }) => (
   <div className="flex-row-gap-2 items-center">
@@ -38,6 +36,8 @@ const EventTags = ({ tags } : {tags: string[] }) => (
 )
 
 const EventDetails = async ({ params }: { params: Promise<{ slug: string }>}) => {
+  'use cache';
+  cacheLife('hours');
   const { slug } = await params;
   
   let event = null;
@@ -108,7 +108,7 @@ const EventDetails = async ({ params }: { params: Promise<{ slug: string }>}) =>
             <p className="text-sm">Be the first to book your spot!</p>
           )}
 
-          <BookEvent />
+          <BookEvent eventId={event._id} slug={event.slug} />
         </div>
        </aside>
      </div>

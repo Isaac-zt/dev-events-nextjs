@@ -3,11 +3,12 @@ import ExploreBtn from "@/components/ExploreBtn";
 import { IEvent } from "@/database";
 import connectToDatabase from "@/lib/mongodb";
 import Event from "@/database/event.model";
-
-// Force dynamic rendering to prevent build-time data fetching
-export const dynamic = 'force-dynamic';
+import { unstable_noStore as noStore } from "next/cache";
 
 const page = async () => {
+  // Explicitly opt out of prerendering and caching for this request
+  noStore();
+
   let events: IEvent[] = [];
   
   try {
